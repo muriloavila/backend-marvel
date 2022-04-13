@@ -25,3 +25,5 @@ Route::apiResource('user', UserController::class);
 Route::apiResource('producao', ProducaoController::class);
 
 Route::apiResource('voto', VotoController::class);
+
+Route::get('order', [VotoController::class, 'list']);

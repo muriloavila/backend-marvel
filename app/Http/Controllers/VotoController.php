@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\VotoResource;
+use App\Http\Resources\ProducaoResource;
 use App\Http\Resources\VotoCollection;
 use App\Models\Voto;
+use App\Models\Producao;
 use Illuminate\Http\Response;
 use App\Http\Requests\VotoRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class VotoController extends Controller
 {
@@ -76,5 +79,18 @@ class VotoController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function list(){
+        $votos = DB::table('votos')->selectRaw('id_producao, SUM(voto) / count(id) as media')
+                ->groupBy('id_producao')
+                ->orderByRaw('SUM(voto) / count(id) DESC')
+                ->paginate(15);
+        
+        $votos->getCollection()->transform(function ($value) {
+            $value = ['producao' => new ProducaoResource(Producao::findOrFail($value->id_producao)), 'media' => $value->media];
+            return $value;
+        });
+        return response()->json($votos);
     }
 }
