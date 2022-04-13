@@ -8,6 +8,7 @@ use App\Http\Resources\VotoCollection;
 use App\Models\Voto;
 use Illuminate\Http\Response;
 use App\Http\Requests\VotoRequest;
+use Illuminate\Support\Facades\Validator;
 
 class VotoController extends Controller
 {
@@ -18,7 +19,6 @@ class VotoController extends Controller
      */
     public function index(VotoRequest $request)
     {
-        
         return response()->json(new VotoCollection(Voto::where($request->only('id_user', 'id_producao'))->get()));
     }
 
@@ -53,7 +53,18 @@ class VotoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make(['id' => $id], ['id' => 'required|int|exists:App\Models\Voto,id']);
+        
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+ 
+        $validated = $validator->validated();
+
+        $voto = Voto::find($id);
+        $voto->voto = $request->input('voto');
+        
+        return response()->json($voto->save(), Response::HTTP_OK);
     }
 
     /**

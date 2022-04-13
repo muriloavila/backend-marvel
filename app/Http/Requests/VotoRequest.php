@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\ApiFormRequest;
+use Illuminate\Support\Facades\Validator;
+
 
 class VotoRequest extends ApiFormRequest
 {
@@ -30,8 +32,12 @@ class VotoRequest extends ApiFormRequest
             case 'POST':
                 return [
                     'voto'          => 'required|int|min:0|max:10',
-                    'id_user'       => 'required|int',
-                    'id_producao'   => 'required|int'
+                    'id_user'       => 'required|int|exists:App\Models\User,id',
+                    'id_producao'   => 'required|int|exists:App\Models\Producao,id'
+                ];
+            case 'PATCH':
+                return [
+                    'voto'          => 'required|int|min:0|max:10'
                 ];
         }
     }

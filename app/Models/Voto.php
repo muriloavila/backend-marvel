@@ -10,7 +10,7 @@ use App\Models\Producao;
 class Voto extends Model
 {
     protected $table = 'votos';
-    protected $fillable = ['id_user', 'id_producao', 'voto'];
+    protected $fillable = ['id', 'id_user', 'id_producao', 'voto'];
 
     public function user(){
         return $this->belongsTo(User::class, 'id_user', 'id');
